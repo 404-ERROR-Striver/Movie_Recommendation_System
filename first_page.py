@@ -18,8 +18,10 @@ def convert(obj):
     for i in ast.literal_eval(obj):
         L.append(i['name'])
     return L
-movies['genres']=movies['genres'].apply(convert)    
-# movies['keywords']=movies['keywords'].apply(convert) 
+movies['genres']=movies['genres'].apply(convert)   
+movies['genres']=movies['genres'].apply(lambda x:[i.replace(" ","") for i in x]) 
+movies['keywords']=movies['keywords'].apply(convert)
+movies['keywords']=movies['keywords'].apply(lambda x:[i.replace(" ","") for i in x])  
 # print(movies.head())
 # print(movies['genres'])
 
@@ -42,6 +44,14 @@ def fetch_production(obj):
         break
     return L
 movies['production_companies']=movies['production_companies'].apply(fetch_production)
+movies['production_companies']=movies['production_companies'].apply(lambda x:[i.replace(" ","") for i in x]) 
 # print(movies['production_companies'])
 movies['overview']= movies['overview'].apply(lambda x:x.split())
-print(movies.head())
+movies['overview']=movies['overview'].apply(lambda x:[i.replace(" ","") for i in x]) 
+movies['tag']= movies['genres']+movies['keywords']+movies['production_companies']+movies['overview']
+# print(movies.head())
+new_df = movies[['id','title','tag']]
+new_df['tag']=new_df['tag'].apply(lambda x:" ".join(x))
+new_df['tag']=new_df['tag'].apply(lambda x:x.lower())
+print(new_df)
+
