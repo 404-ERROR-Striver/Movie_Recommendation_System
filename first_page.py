@@ -1,6 +1,7 @@
 import numpy as np
 import ast
 import pandas as pd
+import nltk
 movies = pd.read_csv(r"C:\Users\ASUS\OneDrive\Desktop\movie recommendation system\movies.csv")
 credits = pd.read_csv(r"C:\Users\ASUS\OneDrive\Desktop\movie recommendation system\tmdb_5000_credits.csv")
 # print(movies.head())
@@ -53,5 +54,36 @@ movies['tag']= movies['genres']+movies['keywords']+movies['production_companies'
 new_df = movies[['id','title','tag']]
 new_df['tag']=new_df['tag'].apply(lambda x:" ".join(x))
 new_df['tag']=new_df['tag'].apply(lambda x:x.lower())
-print(new_df)
+# print(new_df)
 
+from sklearn.feature_extraction.text import CountVectorizer
+cv = CountVectorizer(max_features=5000,stop_words='english')
+vector = cv.fit_transform(new_df['tag']).toarray()
+# print(cv.get_feature_names_out())
+# print(vector)
+
+from nltk.stem.porter import PorterStemmer
+ps=PorterStemmer
+
+def stem(text):
+    y=[]
+
+    for i in text.split():
+        y.append(ps.stem(i))
+    return " ".join(y)    
+
+from sklearn.metrics.pairwise import cosine_similarity
+similarity = cosine_similarity(vector)
+# print(similarity[0])
+sorted(list(enumerate(similarity[0])),reverse=True, key =lambda x:x[1])[1:6]
+def recommend(movies):
+    movie_index = new_df[new_df['title']==movies].index[0]
+    distances =  similarity[movie_index]
+    movies_list =sorted(list(enumerate(distances)),reverse=True, key =lambda x:x[1])[1:6]
+    
+
+    for i in movies_list:
+        print(new_df.iloc[i[0]].title)
+       
+
+print(recommend('Avatar'))
