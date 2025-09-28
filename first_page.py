@@ -87,3 +87,8 @@ def recommend(movies):
        
 
 print(recommend('Avatar'))
+
+import pickle
+pickle.dump(new_df,open('movies.pkl','wb'))
+pickle.dump(new_df.to_dict(),open('movies_dict.pkl','wb'))
+pickle.dump(similarity,open('similarity.pkl','wb'))
