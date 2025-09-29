@@ -3,7 +3,7 @@ import pickle
 import pandas as pd 
 import requests
 
-
+API_KEY = "2f172af5"
 
 def recommend(movie):
     movie_index = movies[movies['title']==movie].index[0]
